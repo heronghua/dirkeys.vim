@@ -1,0 +1,102 @@
+*dirkeys.txt*  项目本地快捷键配置加载与冲突检查
+
+==============================================================================
+CONTENTS                                             *dirkeys-contents*
+
+  1. 简介             |dirkeys-intro|
+  2. 目录结构         |dirkeys-layout|
+  3. 配置项           |dirkeys-options|
+  4. 命令             |dirkeys-commands|
+  5. 冲突检测机制     |dirkeys-conflict|
+  6. 安全提示         |dirkeys-safety|
+
+==============================================================================
+1. 简介                                             *dirkeys-intro*
+
+dirkeys 会检测 Vim 启动时工作目录（cwd）下的 `.vim/` 文件夹，
+按字母序 source 其中所有 `.vim` 文件，并自动检测快捷键冲突。
+
+典型用途：把项目专属的 <Leader> 映射放在项目根目录的 `.vim/` 下，
+跟随仓库分发，团队成员共享，而无需污染全局 vimrc。
+
+==============================================================================
+2. 目录结构                                         *dirkeys-layout*
+
+>text
+  my-project/
+  ├── .vim/
+  │   ├── 00-common.vim      " 按文件名排序加载
+  │   ├── 10-project.vim
+  │   └── sub/20-extra.vim   " 默认递归
+  └── src/
+<
+    .vim/00-common.vim 内容示例：
+>vim
+    nnoremap <buffer><Leader>rr :!make run<CR>
+    nnoremap <Leader>tt :Dispatch<CR>
+<
+==============================================================================
+3. 配置项                                           *dirkeys-options*
+
+g:dirkeys_enable                 默认 1
+    总开关，关闭后 DirkeysLoad / 自动加载都不生效。
+
+g:dirkeys_auto_load              默认 1
+    是否在 VimEnter 时自动加载。
+
+g:dirkeys_dirname                默认 '.vim'
+    配置目录名。
+
+g:dirkeys_recursive              默认 1
+    是否递归加载子目录中的 .vim 文件。
+
+g:dirkeys_search_upward          默认 0
+    未在 cwd 找到目录时，是否向父目录逐级查找。
+
+g:dirkeys_conflict_level         默认 'warn'
+    'warn'   打印警告，继续加载
+    'error'  检测到冲突时中止加载后续文件（已加载的不回滚）
+    'silent' 不打印冲突信息
+
+g:dirkeys_reload_on_dirchange    默认 0
+    :cd 切换目录时是否重新加载。
+
+g:dirkeys_verbose                默认 0
+    打印调试信息。
+
+==============================================================================
+4. 命令                                             *dirkeys-commands*
+
+:DirkeysLoad        手动加载（若已加载会重新 source，不主动清理旧映射）
+:DirkeysReload      同 DirkeysLoad
+:DirkeysStatus      打印当前已加载目录与文件列表
+:DirkeysCheck       静态扫描 .vim 文件中的 map 命令，预检冲突（不 source）
+:DirkeysEdit        打开第一个本地配置（无文件时打开目录）
+
+==============================================================================
+5. 冲突检测机制                                     *dirkeys-conflict*
+
+检测分两类：
+
+  a. 覆盖全局映射
+     加载前先用 maplist()（或回退到 :map 输出）快照所有映射。
+     本地文件 source 后若某 <lhs> 的 rhs/noremap 与基线不同，判定为覆盖。
+
+  b. 本地文件间冲突
+     按文件名顺序加载，累积每个文件“新定义”的映射，
+     后续文件重复定义同一 <lhs> 且 rhs 不同则告警。
+
+注意：
+  - 仅有 maplist()（Vim 8.2.0865+ / Neovim）时检测精确；
+    老版本 Vim 走 :map 解析，结果近似。
+  - 同一 <lhs> 但不同 mode（如 n 与 v）视为不同映射，不冲突。
+  - buffer-local 映射暂不区分具体 buffer。
+
+==============================================================================
+6. 安全提示                                         *dirkeys-safety*
+
+本地 .vim 文件会被完整 source，等同于执行其中的任意 Vim 命令。
+请只在你信任的仓库中使用；必要时配合 :DirkeysCheck 或先阅读
+.vim/ 下的内容再打开 Vim。
+
+vim:tw=78:ts=8:ft=help:norl:
