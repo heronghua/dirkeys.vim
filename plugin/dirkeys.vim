@@ -22,7 +22,7 @@ endfunction
 
 call s:init_default('dirkeys_enable',               1)
 call s:init_default('dirkeys_auto_load',            1)
-call s:init_default('dirkeys_dirname',              '.vim')
+call s:init_default('dirkeys_dirname',              '.dirkeys')
 call s:init_default('dirkeys_recursive',            1)
 call s:init_default('dirkeys_search_upward',        0)
 call s:init_default('dirkeys_conflict_level',       'warn')  " warn | error | silent

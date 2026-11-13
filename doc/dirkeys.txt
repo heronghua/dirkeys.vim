@@ -13,10 +13,10 @@ CONTENTS                                             *dirkeys-contents*
 ==============================================================================
 1. 简介                                             *dirkeys-intro*
 
-dirkeys 会检测 Vim 启动时工作目录（cwd）下的 `.vim/` 文件夹，
+dirkeys 会检测 Vim 启动时工作目录（cwd）下的 `.dirkeys 文件夹，
 按字母序 source 其中所有 `.vim` 文件，并自动检测快捷键冲突。
 
-典型用途：把项目专属的 <Leader> 映射放在项目根目录的 `.vim/` 下，
+典型用途：把项目专属的 <Leader> 映射放在项目根目录的 `.dirkeys 下，
 跟随仓库分发，团队成员共享，而无需污染全局 vimrc。
 
 ==============================================================================
@@ -24,13 +24,13 @@ dirkeys 会检测 Vim 启动时工作目录（cwd）下的 `.vim/` 文件夹，
 
 >text
   my-project/
-  ├── .vim/
+  ├── .dirkeys/
   │   ├── 00-common.vim      " 按文件名排序加载
   │   ├── 10-project.vim
   │   └── sub/20-extra.vim   " 默认递归
   └── src/
 <
-    .vim/00-common.vim 内容示例：
+    .dirkeys/00-common.vim 内容示例：
 >vim
     nnoremap <buffer><Leader>rr :!make run<CR>
     nnoremap <Leader>tt :Dispatch<CR>
@@ -44,7 +44,7 @@ g:dirkeys_enable                 默认 1
 g:dirkeys_auto_load              默认 1
     是否在 VimEnter 时自动加载。
 
-g:dirkeys_dirname                默认 '.vim'
+g:dirkeys_dirname                默认 '.dirkeys'
     配置目录名。
 
 g:dirkeys_recursive              默认 1
@@ -97,6 +97,6 @@ g:dirkeys_verbose                默认 0
 
 本地 .vim 文件会被完整 source，等同于执行其中的任意 Vim 命令。
 请只在你信任的仓库中使用；必要时配合 :DirkeysCheck 或先阅读
-.vim/ 下的内容再打开 Vim。
+.dirkeys/ 下的内容再打开 Vim。
 
 vim:tw=78:ts=8:ft=help:norl:

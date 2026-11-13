@@ -44,7 +44,7 @@ endfunction
 
 function! dirkeys#find_dir(...) abort
   let l:base = a:0 ? a:1 : getcwd()
-  let l:name = get(g:, 'dirkeys_dirname', '.vim')
+  let l:name = get(g:, 'dirkeys_dirname', '.dirkeys')
 
   let l:candidate = simplify(l:base . '/' . l:name)
   if isdirectory(l:candidate)
@@ -277,7 +277,7 @@ function! dirkeys#status() abort
   echomsg '===== dirkeys 状态 ====='
   echohl None
   echomsg '插件启用:     ' . (get(g:, 'dirkeys_enable', 1) ? 'yes' : 'no')
-  echomsg '配置目录名:   ' . get(g:, 'dirkeys_dirname', '.vim')
+  echomsg '配置目录名:   ' . get(g:, 'dirkeys_dirname', '.dirkeys')
   echomsg '已加载目录:   ' . (empty(s:loaded_dir) ? '(无)' : s:loaded_dir)
   echomsg '已加载文件数: ' . len(s:loaded_files)
   for l:f in s:loaded_files
